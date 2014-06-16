@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>LSAT Curve</title>
+  <title>LSAT Percentile by Equated Score (2010 - 2013)</title>
   <style>
     body {background-color:#fff; font:12px sans-serif;}
-    #page {display:block; margin:0 auto; height:800px;width:800px;}
+    div#page {display:block; margin:0 auto; height:800px;width:800px;}
+    p#lead{font-size:14px;}
     .axis path,
     .axis line {fill: none;stroke: #000;shape-rendering: crispEdges;}
-    .point {fill: steelblue;}
+    .point {fill: #ccc;}
     .point:hover {fill: steelblue;}
     .d3-tip {
       line-height: 1;
@@ -44,74 +45,77 @@
   <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
   <script>
 
-    var page = d3.select("div#page")
-    var header = page.append("div")
+    page = d3.select("div#page");
+    header = page.append("div")
         .attr("id","header");
-    var title = header.append("h1")
+    header.append("h1")
         .attr("id","title")
         .text("LSAT Percentile by Equated Score (2010 - 2013)");
+    header.append("p")
+        .attr("id","lead")
+        .text("How does your LSAT score rank relative to the scores of your peers?");
 
-    var svg_height = 500
-    var svg_width = 800
+    svg_height = 500;
+    svg_width = 800;
     var svg = page.append("svg")
         .attr("height",svg_height)
         .attr("width",svg_width);
-    var footer = page.append("div")
+    footer = page.append("div")
         .attr("id","footer");
-    var source_link = footer.append("a")
+    source_link = footer.append("a")
         .attr("href","https://github.com/s2t2/lsat-curve")
         .text("source");
 
-    var margin = {top:15,right:15,bottom:40,left:40};
-    var x = d3.scale.linear()
+    margin = {top:15,right:15,bottom:40,left:40};
+    x = d3.scale.linear()
         .domain([120,180]) // SCALED_SCORES
         .range([(0 + margin.left),(svg_width - margin.right)]);
-    var y = d3.scale.linear()
+    y = d3.scale.linear()
         .domain([0,100]) // PERCENTILES
-        .range([(svg_height - margin.bottom),(0 + margin.top)]) //NOTE: MIN AND MAX INVERTED ON PURPOSE
-    var xAxis = d3.svg.axis()
+        .range([(svg_height - margin.bottom),(0 + margin.top)]); //NOTE: MIN AND MAX INVERTED ON PURPOSE
+    xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom")
-    var yAxis = d3.svg.axis()
+        .orient("bottom");
+    yAxis = d3.svg.axis()
         .scale(y)
         .orient("left")
         .tickFormat(function(d){
           return d + "th"
-        })
-    var xAxisG = svg.append("g")
+        });
+    xAxisG = svg.append("g")
         .call(xAxis)
         .attr("transform","translate(0," + (svg_height - margin.bottom) + ")") // X from the bottom of the svg
-        .attr("class", "axis")
-    var yAxisG = svg.append("g")
+        .attr("class", "axis");
+    yAxisG = svg.append("g")
         .call(yAxis)
         .attr("transform","translate(" + (0 + margin.left) + ",0)") // Y from the left of the svg
-        .attr("class", "axis")
-    var xAxisLabel = xAxisG.append("text")
+        .attr("class", "axis");
+    xAxisLabel = xAxisG.append("text")
         .attr("x", (svg_width - margin.right))
         .attr("y", (1 - margin.bottom / 4))
         .style("text-anchor", "end")
-        .text("Equated Score")
-    var yAxisLabel = yAxisG.append("text")
+        .text("Equated Score");
+    yAxisLabel = yAxisG.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", (1 - margin.top))
         .attr("y", (margin.left / 2))
         .style("text-anchor", "end")
-        .text("Percentile")
+        .text("Percentile");
 
-    var tip = d3.tip().attr('class', 'd3-tip').html(function(d) { 
-      return "<strong>Equated Score:</strong> <span style='color:red'>" + d["equated_score"] + "</span></br> <strong>Percentile: </strong> <span style='color:red'>" + d["percentile"] + percentileSuffixer(d["percentile"]) + "</span>" //using "th" loosely here when really a function reduring 
+    tip = d3.tip().attr('class', 'd3-tip').html(function(d) {
+      return "<strong>Equated Score:</strong> <span style='color:steelblue'>" + d["equated_score"] + "</span></br> <strong>Percentile: </strong> <span style='color:steelblue'>" + d["percentile"] + percentileSuffixer(d["percentile"]) + "</span>"
     });
     svg.call(tip);
 
     d3.json("lsat_curve.json", function(json_data){
-      var curve2013 = json_data["lsat_curve_2010_to_2013"].reverse(function(obj){
+      curve2013 = json_data["lsat_curve_2010_to_2013"].reverse(function(obj){
         return obj["equated_score"]
       });
-      var coordinate = svg.selectAll("g.coordinate")
+      coordinate = svg.selectAll("g.coordinate")
           .data(curve2013)
           .enter().append("g")
           .attr("class","coordinate");
-      var circle = coordinate.append("circle")
+      circle = coordinate.append("circle")
           .attr("cx", function(d){
             return x(d["equated_score"])
           })
