@@ -1,11 +1,7 @@
-# [lsat-curve](http://s2t2.github.io/lsat-curve/)
+# lsat-curve
 
 ##instructions
-view at http://s2t2.github.io/lsat-curve/ 
-  
-OR  
-  
-view at localhost:
+view at http://s2t2.github.io/lsat-curve/ or locally:
 
  + `git clone git@github.com:s2t2/lsat-curve.git`
  + `cd lsat-curve/`
