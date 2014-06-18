@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+<<<<<<< HEAD
   <title>LSAT Percentile by Equated Score (2010 - 2013)</title>
+=======
+  <title>LSAT Percentile by Equated Score</title>
+>>>>>>> master
   <style>
     body {background-color:#fff; font:12px sans-serif;}
     div#page {display:block; margin:0 auto; height:800px;width:800px;}
@@ -46,15 +50,27 @@
   <script>
 
     page = d3.select("div#page");
+<<<<<<< HEAD
     header = page.append("div")
         .attr("id","header");
     header.append("h1")
         .attr("id","title")
         .text("LSAT Percentile by Equated Score (2010 - 2013)");
+=======
+
+    header = page.append("div")
+        .attr("id","header");
+
+    header.append("h1")
+        .attr("id","title")
+        .text("LSAT Percentile by Equated Score");
+
+>>>>>>> master
     header.append("p")
         .attr("id","lead")
         .text("How does your LSAT score rank relative to the scores of your peers?");
 
+<<<<<<< HEAD
     svg_height = 500;
     svg_width = 800;
     var svg = page.append("svg")
@@ -62,11 +78,48 @@
         .attr("width",svg_width);
     footer = page.append("div")
         .attr("id","footer");
+=======
+    var dataset_selector = header.append("select")
+        .attr("id","dataset-selector")
+        .on("change", updateChart)
+
+    dataset_names = [
+        "lsat_curve_2010_to_2013",
+        "lsat_curve_2009_to_2012",
+        "lsat_curve_2008_to_2011",
+        "lsat_curve_2007_to_2010",
+        "lsat_curve_2006_to_2009",
+        "lsat_curve_2005_to_2008",
+        "lsat_curve_2004_to_2007",
+        "lsat_curve_2003_to_2006",
+        "lsat_curve_2002_to_2005"
+    ]; //TODO: get from json data
+
+    var dataset_options = dataset_selector.selectAll("option").data(dataset_names).enter().append("option")
+        .attr("value",function(d){
+          return d
+        })
+        .text(function(d){
+          return d.replace("lsat_curve_", "").replace("_to_"," - ") //-> "2010 - 2013"
+        })
+
+    svg_height = 500;
+    svg_width = 800;
+
+    var svg = page.append("svg")
+        .attr("height",svg_height)
+        .attr("width",svg_width);
+
+    footer = page.append("div")
+        .attr("id","footer");
+
+>>>>>>> master
     source_link = footer.append("a")
         .attr("href","https://github.com/s2t2/lsat-curve")
         .text("source");
 
     margin = {top:15,right:15,bottom:40,left:40};
+<<<<<<< HEAD
     x = d3.scale.linear()
         .domain([120,180]) // SCALED_SCORES
         .range([(0 + margin.left),(svg_width - margin.right)]);
@@ -76,25 +129,56 @@
     xAxis = d3.svg.axis()
         .scale(x)
         .orient("bottom");
+=======
+
+    x = d3.scale.linear()
+        .domain([120,180]) // SCALED_SCORES
+        .range([(0 + margin.left),(svg_width - margin.right)]);
+
+    y = d3.scale.linear()
+        .domain([0,100]) // PERCENTILES
+        .range([(svg_height - margin.bottom),(0 + margin.top)]); //NOTE: MIN AND MAX INVERTED ON PURPOSE
+
+    xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+>>>>>>> master
     yAxis = d3.svg.axis()
         .scale(y)
         .orient("left")
         .tickFormat(function(d){
           return d + "th"
         });
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     xAxisG = svg.append("g")
         .call(xAxis)
         .attr("transform","translate(0," + (svg_height - margin.bottom) + ")") // X from the bottom of the svg
         .attr("class", "axis");
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     yAxisG = svg.append("g")
         .call(yAxis)
         .attr("transform","translate(" + (0 + margin.left) + ",0)") // Y from the left of the svg
         .attr("class", "axis");
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     xAxisLabel = xAxisG.append("text")
         .attr("x", (svg_width - margin.right))
         .attr("y", (1 - margin.bottom / 4))
         .style("text-anchor", "end")
         .text("Equated Score");
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     yAxisLabel = yAxisG.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", (1 - margin.top))
@@ -105,6 +189,7 @@
     tip = d3.tip().attr('class', 'd3-tip').html(function(d) {
       return "<strong>Equated Score:</strong> <span style='color:steelblue'>" + d["equated_score"] + "</span></br> <strong>Percentile: </strong> <span style='color:steelblue'>" + d["percentile"] + percentileSuffixer(d["percentile"]) + "</span>"
     });
+<<<<<<< HEAD
     svg.call(tip);
 
     d3.json("lsat_curve.json", function(json_data){
@@ -128,6 +213,71 @@
           .on("click", tip.show)
           .attr("class","point")
     });
+=======
+
+    svg.call(tip);
+
+    updateChart()
+
+    function updateChart(){
+      d3.json("lsat_curve.json", function(json_data){
+        dataset_name = dataset_selector.property("value")
+        dataset = json_data[String(dataset_name)].reverse(function(obj){
+          return obj["equated_score"]
+        });
+        //console.log(dataset_name)
+        //console.log(dataset)
+
+        //var coordinate = svg.selectAll("g.coordinate")
+        //    .data(dataset)
+
+        //coordinate.exit().remove();
+
+        //coordinate.enter().append("g")
+        //    .attr("class","coordinate");
+        //
+        //var circle = coordinate.append("circle")
+        //    .attr("cx", function(d){
+        //      return x(d["equated_score"])
+        //    })
+        //    .attr("cy", function(d){
+        //      return y(d["percentile"])
+        //    })
+        //    .attr("r",11)
+        //    .on("mouseover", tip.show)
+        //    .on("mouseout", tip.hide)
+        //    .on("click", tip.show)
+        //    .attr("class","point")
+
+        var circle = svg.selectAll("circle")
+          .data(dataset)
+
+        circle.transition()
+            .attr("cx", function(d){
+              return x(d["equated_score"])
+            })
+            .attr("cy", function(d){
+              return y(d["percentile"])
+            })
+
+        circle.enter().append("circle")
+            .attr("r",11)
+            .attr("cx", function(d){
+              return x(d["equated_score"])
+            })
+            .attr("cy", function(d){
+              return y(d["percentile"])
+            })
+            .on("mouseover", tip.show)
+            .on("mouseout", tip.hide)
+            .on("click", tip.show)
+            .attr("class","point")
+
+        circle.exit().remove();
+      }); // d3.json
+
+    }; // updateChart
+>>>>>>> master
 
     function percentileSuffixer(some_number){
       last_digit = String(some_number).slice(-1)
@@ -148,4 +298,8 @@
     }
   </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> master
